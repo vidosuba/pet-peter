@@ -379,6 +379,12 @@ class RteProcessor(DataProcessor):
                 example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label, idx=idx)
                 examples.append(example)
 
+                if set_type == 'test':
+                    print(example)
+                # print('-------_EXAMPLE---------')
+                # print(example)
+                #return []
+
         return examples
 
 

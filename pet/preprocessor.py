@@ -80,6 +80,7 @@ class MLMPreprocessor(Preprocessor):
         assert len(attention_mask) == self.wrapper.config.max_seq_length
         assert len(token_type_ids) == self.wrapper.config.max_seq_length
 
+        #print(example.label, self.label_map)
         label = self.label_map[example.label] if example.label is not None else -100
         logits = example.logits if example.logits else [-1]
 
@@ -126,6 +127,8 @@ class SequenceClassifierPreprocessor(Preprocessor):
                 example.text_b if example.text_b else None,
                 add_special_tokens=True,
                 max_length=self.wrapper.config.max_seq_length,
+                truncation=True,
+
             )
         input_ids, token_type_ids = inputs["input_ids"], inputs.get("token_type_ids")
 

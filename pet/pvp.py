@@ -425,6 +425,7 @@ class RtePVP(PVP):
         text_b = self.shortenable(example.text_b.rstrip(string.punctuation))
 
         if self.pattern_id == 0:
+            #print(['"', text_b, '" ?'], [self.mask, ', "', text_a, '"'])
             return ['"', text_b, '" ?'], [self.mask, ', "', text_a, '"']
         elif self.pattern_id == 1:
             return [text_b, '?'], [self.mask, ',', text_a]
@@ -433,6 +434,7 @@ class RtePVP(PVP):
         elif self.pattern_id == 3:
             return [text_b, '?'], [self.mask, '.', text_a]
         elif self.pattern_id == 4:
+            #print([text_a, ' question: ', self.shortenable(example.text_b), ' True or False? answer:', self.mask], [])
             return [text_a, ' question: ', self.shortenable(example.text_b), ' True or False? answer:', self.mask], []
 
     def verbalize(self, label) -> List[str]:

@@ -29,15 +29,48 @@ class MyTaskPVP(PVP):
     """
 
     # Set this to the name of the task
-    TASK_NAME = "my-task"
+    TASK_NAME = "ner"
 
     # Set this to the verbalizer for the given task: a mapping from the task's labels (which can be obtained using
     # the corresponding DataProcessor's get_labels method) to tokens from the language model's vocabulary
-    VERBALIZER = {
-        "1": ["World"],
-        "2": ["Sports"],
-        "3": ["Business"],
-        "4": ["Tech"]
+    # VERBALIZER = {
+    #     "LOC": ["location"],
+    #     "PER": ["person"],
+    #     "ORG": ["organization"],
+    #     "MISC": ["other"],
+    #     "O": ["no"]
+    # }
+
+    # VERBALIZER_0 = {                    #MULTIBERT
+    #     "LOC": ["miesta"],
+    #     "PER": ["osoby"],
+    #     "ORG": ['organizace'], #["organizácie"],
+    #     "MISC": ["rôzne"],
+    #     "O": ["nic"]
+    # }
+    #
+    # VERBALIZER_1 = {                    #MULTIBERT
+    #     "LOC": ["miesta"],
+    #     "PER": ["osoby"],
+    #     "ORG": ['organizace'], #["organizácie"],
+    #     "MISC": ["rôzne"],
+    #     "O": ["nic"]
+    # }
+
+    VERBALIZER_0 = {                  #SLOVAKBERT
+        "LOC": ["mie", "sta"],
+        "PER": ["osob", "y"],
+        "ORG": ["organi", "zacie"], #["organizácie"],
+        "MISC": ["rôz", "nu"],
+        "O": ["z", "iad", "nu"]
+    }
+
+    VERBALIZER_1 = {                  #SLOVAKBERT PVP 1
+        "LOC": ["miesto"],
+        "PER": ["osob", "a"],
+        "ORG": ["organi", "zacia"], #["organizácie"],
+        "MISC": ["rôz", "ne"],
+        "O": ["nic"]
     }
 
     def get_parts(self, example: InputExample):
@@ -56,15 +89,25 @@ class MyTaskPVP(PVP):
         # can also be empty).
         if self.pattern_id == 0:
             # this corresponds to the pattern [MASK]: a b
-            return [self.mask, ':', text_a, text_b], []
-        elif self.pattern_id == 1:
-            # this corresponds to the pattern [MASK] News: a || (b)
-            return [self.mask, 'News:', text_a], ['(', text_b, ')']
+            # return [self.mask, ':', text_a, text_b], []
+            # return [text_a, ' question: ', self.shortenable(example.text_b), ' True or False? answer:', self.mask], []
+            #return [text_a, ' In the sentence above, the token ', text_b, ' refers to a ', self.mask,  ' named entity'], []
+            return [text_a, ' V predchadzajúcej vete, slovo ', text_b, ' označuje entitu ', self.mask], []
+        if self.pattern_id == 1:
+            # this corresponds to the pattern [MASK]: a b
+            # return [self.mask, ':', text_a, text_b], []
+            # return [text_a, ' question: ', self.shortenable(example.text_b), ' True or False? answer:', self.mask], []
+            return [text_a, text_b, ' je ', self.mask], []
         else:
             raise ValueError("No pattern implemented for id {}".format(self.pattern_id))
 
     def verbalize(self, label) -> List[str]:
-        return MyTaskPVP.VERBALIZER[label]
+        # print('-----VERBALIZE----------------')
+        # print(label, MyTaskPVP.VERBALIZER[label])
+        if self.pattern_id == 0:
+            return MyTaskPVP.VERBALIZER_0[label]
+        elif self.pattern_id == 1:
+            return MyTaskPVP.VERBALIZER_1[label]
 
 
 # register the PVP for this task with its name

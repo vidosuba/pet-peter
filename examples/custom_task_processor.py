@@ -17,6 +17,7 @@ This file shows an example of a DataProcessor for a new task.
 """
 
 import csv
+import json
 import os
 from typing import List
 
@@ -31,22 +32,22 @@ class MyTaskDataProcessor(DataProcessor):
     """
 
     # Set this to the name of the task
-    TASK_NAME = "my-task"
+    TASK_NAME = "ner"
 
     # Set this to the name of the file containing the train examples
-    TRAIN_FILE_NAME = "train.csv"
+    TRAIN_FILE_NAME = "train.jsonl"
 
     # Set this to the name of the file containing the dev examples
-    DEV_FILE_NAME = "dev.csv"
+    DEV_FILE_NAME = "dev.jsonl"
 
     # Set this to the name of the file containing the test examples
-    TEST_FILE_NAME = "test.csv"
+    TEST_FILE_NAME = "test.jsonl"
 
     # Set this to the name of the file containing the unlabeled examples
-    UNLABELED_FILE_NAME = "unlabeled.csv"
+    UNLABELED_FILE_NAME = "unlabeled.jsonl"
 
     # Set this to a list of all labels in the train + test data
-    LABELS = ["1", "2", "3", "4"]
+    LABELS = ["LOC", "PER", "ORG", "MISC", "O"]
 
     # Set this to the column of the train/test csv files containing the input's text a
     TEXT_A_COLUMN = 1
@@ -97,16 +98,34 @@ class MyTaskDataProcessor(DataProcessor):
         """Creates examples for the training and dev sets."""
         examples = []
 
-        with open(path) as f:
-            reader = csv.reader(f, delimiter=',')
-            for idx, row in enumerate(reader):
-                guid = "%s-%s" % (set_type, idx)
-                label = row[MyTaskDataProcessor.LABEL_COLUMN]
-                text_a = row[MyTaskDataProcessor.TEXT_A_COLUMN]
-                text_b = row[MyTaskDataProcessor.TEXT_B_COLUMN] if MyTaskDataProcessor.TEXT_B_COLUMN >= 0 else None
-                example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
-                examples.append(example)
+        # with open(path) as f:
+        #     reader = csv.reader(f, delimiter=',')
+        #     for idx, row in enumerate(reader):
+        #         guid = "%s-%s" % (set_type, idx)
+        #         label = row[MyTaskDataProcessor.LABEL_COLUMN]
+        #         text_a = row[MyTaskDataProcessor.TEXT_A_COLUMN]
+        #         text_b = row[MyTaskDataProcessor.TEXT_B_COLUMN] if MyTaskDataProcessor.TEXT_B_COLUMN >= 0 else None
+        #         example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
+        #         examples.append(example)
 
+        with open(path, encoding='utf-8') as f:
+            for line_idx, line in enumerate(f):
+                example_json = json.loads(line)
+                idx = line_idx
+                sentence = example_json.get('sentence')
+                tags = example_json.get('tags')
+                tokens = sentence.split(' ')
+                if tags is None:
+                    tags = [None] * len(tokens)
+                if len(tokens) != len(tags):
+                    raise ValueError(f'Tokens ans tags are not the same length in {idx}. sentence!')
+                for token, tag in zip(tokens, tags):
+                    guid = "%s-%s" % (set_type, idx)
+                    example = InputExample(guid=guid, text_a=sentence, text_b=token, label=tag, idx=idx)
+                    examples.append(example)
+
+        # print('-----MY EXAMPLE-----')
+        # print(examples[0])
         return examples
 
 

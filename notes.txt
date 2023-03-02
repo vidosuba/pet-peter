@@ -1,0 +1,264 @@
+export CUDA_VISIBLE_DEVICES=<ID>
+
+YELP - not working
+
+python3 cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/yelp \
+--model_type roberta \
+--model_name_or_path roberta-large \
+--task_name yelp-polarity \
+--output_dir output/yelp \
+--do_train \
+--do_eval \
+--pet_max_seq_length 1024
+
+RTE - from github issue - working
+
+python3 cli.py \
+--method pet \
+--pattern_ids 0 1 2 3 \
+--data_dir data/rte \
+--model_type albert \
+--model_name_or_path albert-xxlarge-v2 \
+--task_name rte \
+--output_dir output/rte \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 2 \
+--pet_gradient_accumulation_steps 8 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 2 \
+--sc_gradient_accumulation_steps 8 \
+--sc_max_steps 5000 2>&1 --cache cache | tee rte.log
+
+
+NER - example - working
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner/example \
+--model_type albert \
+--model_name_or_path albert-xxlarge-v2 \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 2 \
+--pet_gradient_accumulation_steps 8 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 2 \
+--sc_gradient_accumulation_steps 8 \
+--sc_max_steps 5000 2>&1 | tee ner.log
+
+
+NER - production - 01
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type bert \
+--model_name_or_path bert-base-multilingual-uncased \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 2 \
+--pet_gradient_accumulation_steps 8 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 2 \
+--sc_gradient_accumulation_steps 8 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NER - production - 02
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type bert \
+--model_name_or_path bert-base-multilingual-uncased \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--cache_dir cache 2>&1 | tee ner.log
+
+
+--pet_per_gpu_train_batch_size 2 \
+--pet_gradient_accumulation_steps 8 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 2 \
+--sc_gradient_accumulation_steps 8 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log
+
+
+NER - production - 03
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 2 \
+--pet_gradient_accumulation_steps 8 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 2 \
+--sc_gradient_accumulation_steps 8 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - 01
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 16 \
+--sc_per_gpu_unlabeled_batch_size 16 \
+--pet_repetitions 1 \
+--pet_num_train_epochs 1 \
+--sc_num_train_epochs 1 \
+--sc_max_steps 100 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - short
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 16 \
+--sc_per_gpu_unlabeled_batch_size 16 \
+--pet_repetitions 1 \
+--pet_num_train_epochs 1 \
+--sc_num_train_epochs 0 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - 02
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 16 \
+--sc_per_gpu_unlabeled_batch_size 16 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - 03
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 2 \
+--pet_gradient_accumulation_steps 8 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 2 \
+--sc_gradient_accumulation_steps 8 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - 04
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 1\
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 4 \
+--pet_gradient_accumulation_steps 4 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 4 \
+--sc_gradient_accumulation_steps 4 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - 05
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 0 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 4 \
+--pet_gradient_accumulation_steps 4 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 4 \
+--sc_gradient_accumulation_steps 4 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log
+
+NERR - production - 06
+
+python3 -u cli.py \
+--method pet \
+--pattern_ids 1 \
+--data_dir data/ner \
+--eval_set test \
+--model_type roberta \
+--model_name_or_path gerulata/slovakbert \
+--task_name ner \
+--output_dir output/ner \
+--do_train \
+--do_eval \
+--pet_per_gpu_train_batch_size 4 \
+--pet_gradient_accumulation_steps 4 \
+--pet_max_steps 250 \
+--sc_per_gpu_unlabeled_batch_size 4 \
+--sc_gradient_accumulation_steps 4 \
+--sc_max_steps 5000 \
+--cache_dir cache 2>&1 | tee ner.log

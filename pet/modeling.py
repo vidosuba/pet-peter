@@ -28,6 +28,9 @@ import log
 from pet.utils import InputExample, exact_match, save_logits, save_predictions, softmax, LogitsList, set_seed, eq_div
 from pet.wrapper import TransformerModelWrapper, SEQUENCE_CLASSIFIER_WRAPPER, WrapperConfig
 
+import transformers
+
+#transformers.logging.set_verbosity_error()
 logger = log.get_logger('root')
 
 
@@ -219,6 +222,7 @@ def train_pet(ensemble_model_config: WrapperConfig, ensemble_train_config: Train
               final_repetitions: int = 1, reduction: str = 'wmean', train_data: List[InputExample] = None,
               unlabeled_data: List[InputExample] = None, eval_data: List[InputExample] = None, do_train: bool = True,
               do_eval: bool = True, no_distillation: bool = False, seed: int = 42):
+    #david no_distillation: bool = False
     """
     Train and evaluate a new PET model for a given task.
 
@@ -350,9 +354,11 @@ def train_pet_ensemble(model_config: WrapperConfig, train_config: TrainConfig, e
                 else:
                     ipet_train_data = None
 
+                print('-----single model------')
                 results_dict.update(train_single_model(wrapper, train_data, train_config, eval_config,
                                                        ipet_train_data=ipet_train_data,
                                                        unlabeled_data=unlabeled_data))
+                print('-----single model------')
 
                 with open(os.path.join(pattern_iter_output_dir, 'results.txt'), 'w') as fh:
                     fh.write(str(results_dict))
@@ -423,6 +429,7 @@ def train_single_model(model: TransformerModelWrapper, train_data: List[InputExa
     """
 
     device = torch.device(config.device if config.device else "cuda" if torch.cuda.is_available() else "cpu")
+    print('------DEVICE------', device)
     if not ipet_train_data:
         ipet_train_data = []
 

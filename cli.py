@@ -27,6 +27,9 @@ from pet.wrapper import WRAPPER_TYPES, MODEL_CLASSES, SEQUENCE_CLASSIFIER_WRAPPE
 import pet
 import log
 
+import examples.custom_task_processor
+import examples.custom_task_pvp
+
 logger = log.get_logger('root')
 
 
@@ -230,6 +233,7 @@ def main():
     if args.task_name not in PROCESSORS:
         raise ValueError("Task '{}' not found".format(args.task_name))
     processor = PROCESSORS[args.task_name]()
+    print(processor.get_labels())
     args.label_list = processor.get_labels()
 
     train_ex_per_label, test_ex_per_label = None, None
